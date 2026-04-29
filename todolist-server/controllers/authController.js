@@ -36,18 +36,29 @@ exports.signup = (req, res) => {
 
 // 로그인
 exports.login = (req, res) => {
-  const { email, password } = req.body;
+  const email = req.body?.email;
+  const password = req.body?.password;
+
+  if (!email || !password) {
+    return res.status(400).json({
+      message: "이메일과 비밀번호를 입력해주세요.",
+    });
+  }
 
   db.query(
     "SELECT * FROM users WHERE email = ?",
     [email],
     async (err, results) => {
-      if (err) return res.status(500).send("DB 오류");
+      if (err) {
+        return res.status(500).json({
+          message: "DB오류",
+        });
+      }
 
       if (results.length === 0) {
-        return res
-          .status(400)
-          .json({ message: "이메일 또는 비밀번호가 일치하지 않습니다." });
+        return res.status(401).json({
+          message: "이메일 또는 비밀번호가 일치하지 않습니다.",
+        });
       }
 
       const user = results[0];
@@ -56,14 +67,24 @@ exports.login = (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
-          return res
-            .status(400)
-            .send("이메일 또는 비밀번호가 일치하지 않습니다.");
+          return res.status(401).json({
+            message: "이메일 또는 비밀번호가 일치하지 않습니다.",
+          });
         }
 
-        res.send("로그인 성공");
+        return res.status(200).json({
+          message: "로그인 성공",
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+          },
+        });
       } catch (error) {
-        res.status(500).send("서버오류");
+        console.error(error);
+        return res.status(500).json({
+          message: "서버 오류",
+        });
       }
     },
   );

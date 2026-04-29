@@ -25,11 +25,11 @@ const handleLogin = async () => {
       password: pw.value,
     });
 
-    alert(res.data);
+    alert(res.data.message);
 
     router.push("/todo");
   } catch (err) {
-    alert(err.response?.data || "로그인 실패");
+    alert(err.response?.data?.message);
   }
 };
 
