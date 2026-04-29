@@ -1,0 +1,39 @@
+@font-face {
+  font-family: "MyFont";
+  src: url("/fonts/fonts.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  --text-color: #4b2e1c;
+  --sub-color: #e2cdab;
+  --bg-color: #fef8e6;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-color);
+  font-family: "MyFont", sans-serif;
+}
+
+button,
+input,
+textarea {
+  font-family: inherit;
+}
+
+.main-logo-img {
+  width: 200px;
+  height: 200px;
+  margin: auto;
+  background-image: url("/img/logo.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
