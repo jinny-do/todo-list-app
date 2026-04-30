@@ -1,5 +1,7 @@
 const db = require("../db/db");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const env = require("dotenv").config();
 
 // 회원가입
 exports.signup = (req, res) => {
@@ -72,8 +74,14 @@ exports.login = (req, res) => {
           });
         }
 
+        // 토큰 발급
+        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+          expiresIn: "1h",
+        });
+
         return res.status(200).json({
           message: "로그인 성공",
+          token,
           user: {
             id: user.id,
             name: user.name,

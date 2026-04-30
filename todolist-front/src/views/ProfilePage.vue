@@ -1,65 +1,76 @@
-<script setup></script>
+<script setup>
+import { onMounted, ref } from "vue";
+import axios from "axios";
+
+const name = ref("");
+const email = ref("");
+
+onMounted(async () => {
+  try {
+    const res = await axios.get("http://localhost:3000/api/user/me");
+
+    name.value = res.data.name;
+    email.value = res.data.email;
+  } catch (err) {
+    console.error(err);
+  }
+});
+</script>
 
 <template>
   <div class="container">
-    <div class="profileImage">
-      <img src="/img/logo.png" alt="Profile Image" />
+    <div class="profile">
+      <h2 class="profile-header-text">📝{{ name }}님의 TODO LIST</h2>
+      <div class="profile-box">
+        <div class="profile-img-box">
+          <div class="profile-img"></div>
+        </div>
+        <div class="user-info">
+          <p>이름 : {{ name }}</p>
+          <p>이메일 : {{ email }}</p>
+        </div>
+      </div>
     </div>
-    <p>아이디 : todo</p>
-    <p>이메일 : todo@aaa.com</p>
-    <p>이름 : 투두</p>
-    <p>생일 : 2000-01-01</p>
   </div>
 </template>
 
 <style scoped>
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #fff8e7;
-}
-
-#app {
-  width: 100vw;
-  min-height: 100vh;
-  background-color: #fff8e7;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
 .container {
-  width: 600px;
-  height: 300px;
-  background-color: #c89b5a;
-  padding: 40px;
-  border: 5px solid #8b5e3c;
-  position: relative;
-  box-shadow:
-    rgba(0, 0, 0, 0.25) 0px 14px 28px,
-    rgba(0, 0, 0, 0.22) 0px 10px 10px;
+  padding: 50px;
 }
 
-.profileImage {
+.profile {
+  padding: 20px;
+  background-color: #c89b5a;
+  border-radius: 20px;
+  border: 3px dashed #8b5e3c;
+}
+
+.profile-header-text {
+  color: var(--text-color);
+}
+
+.profile-box {
+  padding: 40px;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 30px;
+}
+
+.profile-img-box {
+  background-color: #fff;
   width: 250px;
   height: 335px;
-  background-color: #ffffff;
-  position: absolute;
-  top: 20px;
-  left: 20px;
   border: 5px solid #8b5e3c;
+  border-radius: 10px;
 }
 
-.profileImage img {
+.profile-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-}
-
-p {
-  padding-left: 300px;
-  font-size: 14px;
-  color: #333;
+  background-image: url("/img/logo.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 </style>

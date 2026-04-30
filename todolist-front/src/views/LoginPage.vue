@@ -20,13 +20,14 @@ const handleLogin = async () => {
   }
 
   try {
-    const res = await axios.post("http://localhost:3000/auth/login", {
+    const res = await axios.post("http://localhost:3000/api/auth/login", {
       email: email.value,
       password: pw.value,
     });
 
-    alert(res.data.message);
+    localStorage.setItem("token", res.data.token);
 
+    alert(res.data.message);
     router.push("/todo");
   } catch (err) {
     alert(err.response?.data?.message);
