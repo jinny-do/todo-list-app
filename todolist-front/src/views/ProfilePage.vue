@@ -29,6 +29,7 @@ onMounted(async () => {
           <p>이름 : {{ name }}</p>
           <p>이메일 : {{ email }}</p>
         </div>
+        <img src="/img/pen.png" alt="연필" class="pen" />
       </div>
     </div>
   </div>
@@ -44,6 +45,9 @@ onMounted(async () => {
   background-color: #c89b5a;
   border-radius: 20px;
   border: 3px dashed #8b5e3c;
+  box-shadow:
+    rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+    rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
 }
 
 .profile-header-text {
@@ -55,6 +59,7 @@ onMounted(async () => {
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: 30px;
+  position: relative;
 }
 
 .profile-img-box {
@@ -72,5 +77,25 @@ onMounted(async () => {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.user-info {
+  font-size: 30px;
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 5px solid #8b5e3c;
+  text-align: center;
+}
+
+.pen {
+  position: absolute;
+  width: 70px;
+  right: 30px;
 }
 </style>
