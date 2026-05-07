@@ -1,7 +1,7 @@
 <script setup>
+import axios from "axios";
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import axios from "axios";
 
 const name = ref("");
 const email = ref("");
@@ -32,7 +32,8 @@ const handleSignup = async () => {
   }
 
   try {
-    const res = await axios.post("http://localhost:3000/auth/signup", {
+    const res = await axios.post("http://localhost:3000/api/auth/signup", {
+      // /api 추가
       name: name.value,
       email: email.value,
       password: pw.value,
@@ -65,7 +66,7 @@ const checkEmail = async () => {
   }
 
   try {
-    const res = await axios.post("http://localhost:3000/auth/check-email", {
+    const res = await axios.post("http://localhost:3000/api/auth/check-email", {
       email: email.value,
     });
 

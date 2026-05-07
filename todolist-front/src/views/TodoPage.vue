@@ -1,37 +1,85 @@
-<script setup></script>
+<script setup>
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const newTodo = ref("");
+const todos = ref([
+  { id: 1, text: "Vue 3 학습하기", date: "2025-04-25", completed: false },
+  { id: 2, text: "프로젝트 구조 설계", date: "2025-04-26", completed: false },
+]);
+
+const addTodo = () => {
+  if (newTodo.value.trim() === "") return;
+
+  const now = new Date();
+  const dateString = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+
+  const newItem = {
+    id: Date.now(),
+    text: newTodo.value,
+    date: dateString,
+    completed: false,
+  };
+
+  todos.value.push(newItem);
+  newTodo.value = "";
+};
+
+const deleteTodo = (id) => {
+  todos.value = todos.value.filter((todo) => todo.id !== id);
+};
+
+const editTodo = (id) => {
+  const todo = todos.value.find((t) => t.id === id);
+  const newText = prompt("할 일을 수정하세요", todo.text);
+  if (newText && newText.trim() !== "") {
+    todo.text = newText;
+  }
+};
+
+const handleLogout = () => {
+  localStorage.clear();
+  alert("로그아웃 되었습니다.");
+  window.location.href = "/intro";
+};
+
+const goToProfile = () => {
+  router.push("/profile");
+};
+</script>
 
 <template>
   <div class="page">
+    <div class="header-actions">
+      <button class="profile-btn" @click="goToProfile">프로필</button>
+      <button class="logout-btn" @click="handleLogout">로그아웃</button>
+    </div>
+
     <h1>오늘의 할 일</h1>
+
     <div class="container">
       <div class="todo-input">
-        <input placeholder="할 일을 입력하세요..." />
-        <button>+</button>
+        <input
+          v-model="newTodo"
+          placeholder="할 일을 입력하세요..."
+          @keyup.enter="addTodo"
+        />
+        <button @click="addTodo">+</button>
       </div>
-      <div class="todo-item">
+
+      <div v-for="item in todos" :key="item.id" class="todo-item">
         <div class="left">
-          <input type="checkbox" />
+          <input type="checkbox" v-model="item.completed" />
           <div>
-            <p>Vue 3 학습하기</p>
-            <small>2025-04-25</small>
+            <p>{{ item.text }}</p>
+            <small>{{ item.date }}</small>
           </div>
         </div>
-        <div>
-          <button>수정</button>
-          <button>삭제</button>
-        </div>
-      </div>
-      <div class="todo-item">
-        <div class="left">
-          <input type="checkbox" />
-          <div>
-            <p>프로젝트 구조 설계</p>
-            <small>2025-04-26</small>
-          </div>
-        </div>
-        <div>
-          <button>수정</button>
-          <button>삭제</button>
+        <div class="actions">
+          <button @click="editTodo(item.id)">수정</button>
+          <button @click="deleteTodo(item.id)">삭제</button>
         </div>
       </div>
     </div>
@@ -42,6 +90,7 @@
 .page {
   background: #fff8e7;
   padding: 40px 20px;
+  min-height: 100vh;
 }
 
 h1 {
@@ -58,12 +107,6 @@ h1 {
   border: 5px solid #c89b5a;
 }
 
-::placeholder {
-  color: #aaaaaa;
-  font-size: 20px;
-  font-weight: bold;
-}
-
 .todo-input {
   display: flex;
   gap: 10px;
@@ -73,57 +116,81 @@ h1 {
 .todo-input input {
   flex: 1;
   padding: 15px;
+  border: 2px solid #c89b5a;
+  border-radius: 10px;
 }
 
 .todo-input button {
   background: #fff8e7;
-  color: #000000;
   font-size: 20px;
   font-weight: bold;
   border: 5px solid #c89b5a;
-  padding: 15px 20px;
+  padding: 10px 20px;
   cursor: pointer;
   border-radius: 10px;
 }
 
 .todo-item {
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
-  padding: 10px;
+  padding: 15px;
   border: 5px solid #c89b5a;
   margin-bottom: 15px;
-  font-weight: bold;
   border-radius: 10px;
-  font-size: large;
   align-items: center;
 }
 
-small {
-  color: #8b8b8b;
+.todo-item p {
+  margin: 0;
+  font-weight: bold;
 }
 
 .todo-item button {
   background: #fff8e7;
-  color: #000000;
-  font-size: 20px;
-  font-weight: bold;
-  border: 5px solid #c89b5a;
-  padding: 10px 15px;
+  border: 3px solid #c89b5a;
+  padding: 5px 10px;
   cursor: pointer;
-  border-radius: 10px;
-  margin-right: 5px;
+  border-radius: 8px;
+  margin-left: 5px;
+  font-weight: bold;
 }
 
 .left {
   display: flex;
   gap: 10px;
+  align-items: center;
 }
 
-.left input[type="checkbox"]:checked + div p,
-.left input[type="checkbox"]:checked + div small {
+.left input[type="checkbox"]:checked + div p {
   text-decoration: line-through;
   color: #8b8b8b;
-  opacity: 0.8;
+}
+
+.header-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  max-width: 660px;
+  margin: 0 auto 20px;
+}
+
+.profile-btn {
+  background: #c89b5a;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.logout-btn {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
 }
 </style>
