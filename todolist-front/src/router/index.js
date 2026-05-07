@@ -51,3 +51,46 @@ router.beforeEach((to, from, next) => {
 });
 
 export default router;
+
+// router.beforeEach(async (to, from, next) => {
+//   const token = localStorage.getItem("token");
+
+//   // 로그인 필요한 페이지
+//   if (to.meta.requiresAuth) {
+//     if (!token) {
+//       return next("/intro");
+//     }
+
+//     try {
+//       await axios.get("http://localhost:3000/api/user/me", {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       });
+
+//       next();
+//     } catch (err) {
+//       localStorage.removeItem("token");
+//       next("/intro");
+//     }
+
+//     return;
+//   }
+
+//   // 로그인 상태면 intro/signup 접근 막기
+//   if ((to.path === "/intro" || to.path === "/signup") && token) {
+//     try {
+//       await axios.get("http://localhost:3000/api/user/me", {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       });
+
+//       return next("/todo");
+//     } catch (err) {
+//       localStorage.removeItem("token");
+//     }
+//   }
+
+//   next();
+// });
