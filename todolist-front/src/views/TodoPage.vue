@@ -6,8 +6,6 @@ const router = useRouter();
 
 const newTodo = ref("");
 const todos = ref([
-  { id: 1, text: "Vue 3 학습하기", date: "2025-04-25", completed: false },
-  { id: 2, text: "프로젝트 구조 설계", date: "2025-04-26", completed: false },
 ]);
 
 const addTodo = () => {
