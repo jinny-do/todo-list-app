@@ -1,7 +1,7 @@
 <script setup>
+import axios from "axios";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import axios from "axios";
 
 const router = useRouter();
 
@@ -67,10 +67,9 @@ const isEmailValid = (email) => {
         </div>
 
         <button type="submit" class="login-btn">로그인</button>
-        <span
-          >처음이신가요?
-          <router-link to="/signup">회원가입하기</router-link></span
-        >
+        <span>
+          처음이신가요?<router-link to="/signup">회원가입하기</router-link>
+        </span>
       </div>
     </form>
   </div>
@@ -133,5 +132,9 @@ const isEmailValid = (email) => {
   background-color: var(--sub-color);
   color: var(--text-color);
   transition: all 0.3s;
+}
+
+.router-link {
+  cursor: pointer;
 }
 </style>

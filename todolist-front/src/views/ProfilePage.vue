@@ -1,6 +1,6 @@
 <script setup>
-import { onMounted, ref } from "vue";
 import axios from "axios";
+import { onMounted, ref } from "vue";
 
 const name = ref("");
 const email = ref("");
@@ -49,7 +49,7 @@ onMounted(async () => {
 
 .profile {
   margin: auto;
-  width: 800px;
+  max-width: 900px;
   padding: 20px;
   background-color: #c89b5a;
   border-radius: 20px;
@@ -66,6 +66,7 @@ onMounted(async () => {
 .profile-header-text:hover {
   color: var(--bg-color);
   transition: all 0.3s;
+  cursor: pointer;
 }
 
 .profile-header-text {

@@ -5,8 +5,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 
 const newTodo = ref("");
-const todos = ref([
-]);
+const todos = ref([]);
 
 const addTodo = () => {
   if (newTodo.value.trim() === "") return;
@@ -50,13 +49,7 @@ const goToProfile = () => {
 
 <template>
   <div class="page">
-    <div class="header-actions">
-      <button class="profile-btn" @click="goToProfile">프로필</button>
-      <button class="logout-btn" @click="handleLogout">로그아웃</button>
-    </div>
-
     <h1>오늘의 할 일</h1>
-
     <div class="container">
       <div class="todo-input">
         <input
@@ -87,13 +80,13 @@ const goToProfile = () => {
 <style scoped>
 .page {
   background: #fff8e7;
-  padding: 40px 20px;
+  padding: 30px;
   min-height: 100vh;
 }
 
 h1 {
   text-align: center;
-  padding-bottom: 40px;
+  padding-bottom: 30px;
 }
 
 .container {
@@ -108,7 +101,7 @@ h1 {
 .todo-input {
   display: flex;
   gap: 10px;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 }
 
 .todo-input input {
@@ -123,7 +116,7 @@ h1 {
   font-size: 20px;
   font-weight: bold;
   border: 5px solid #c89b5a;
-  padding: 10px 20px;
+  padding: 10px 15px;
   cursor: pointer;
   border-radius: 10px;
 }
@@ -145,7 +138,7 @@ h1 {
 
 .todo-item button {
   background: #fff8e7;
-  border: 3px solid #c89b5a;
+  border: 5px solid #c89b5a;
   padding: 5px 10px;
   cursor: pointer;
   border-radius: 8px;
@@ -164,31 +157,4 @@ h1 {
   color: #8b8b8b;
 }
 
-.header-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  max-width: 660px;
-  margin: 0 auto 20px;
-}
-
-.profile-btn {
-  background: #c89b5a;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.logout-btn {
-  background: #f44336;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-}
 </style>

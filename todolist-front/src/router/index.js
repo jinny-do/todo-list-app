@@ -1,31 +1,55 @@
 import { createRouter, createWebHashHistory } from "vue-router";
+
 import IntroPage from "../views/IntroPage.vue";
+import ProfilePage from "../views/ProfilePage.vue";
 import SignupPage from "../views/SignupPage.vue";
 import TodoPage from "../views/TodoPage.vue";
-import ProfilePage from "../views/ProfilePage.vue";
 
 const routes = [
   {
     path: "/",
     redirect: "/intro",
   },
+
+  // 로그인 화면
   {
     path: "/intro",
     component: IntroPage,
+
+    meta: {
+      layout: "empty",
+    },
   },
+
+  // 회원가입 화면
   {
     path: "/signup",
     component: SignupPage,
+
+    meta: {
+      layout: "empty",
+    },
   },
+
+  // 메인 앱 화면
   {
     path: "/todo",
     component: TodoPage,
-    meta: { requiresAuth: true },
+
+    meta: {
+      requiresAuth: true,
+      layout: "default",
+    },
   },
+
+  // 프로필 화면
   {
     path: "/profile",
     component: ProfilePage,
-    //meta: { requiresAuth: true },
+
+    meta: {
+      layout: "default",
+    },
   },
 ];
 
@@ -42,7 +66,7 @@ router.beforeEach((to, from, next) => {
     return next("/intro");
   }
 
-  // 로그인 했는데 intro/signup 가려는 경우 막기
+  // 로그인 했는데 intro/signup 접근 시 막기
   if ((to.path === "/intro" || to.path === "/signup") && token) {
     return next("/todo");
   }
