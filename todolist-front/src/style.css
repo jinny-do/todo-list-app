@@ -21,7 +21,7 @@
 body {
   background-color: var(--bg-color);
   font-family: "MyFont", sans-serif;
-  cursor: url("/cursor/jelly2.png"), auto;
+  cursor: url("/cursor/jelly.png"), auto;
 }
 
 button,
