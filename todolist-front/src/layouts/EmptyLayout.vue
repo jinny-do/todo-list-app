@@ -45,8 +45,6 @@ import Footer from "../components/Footer.vue";
 
   display: flex;
   flex-direction: column;
-
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
 }
 
 .content {
