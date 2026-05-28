@@ -1,38 +1,75 @@
-<script setup>
+<script setup lang="js">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import axios from "axios";
 
 const router = useRouter();
 
 const newTodo = ref("");
 const todos = ref([]);
+const userStr = localStorage.getItem("user");
+const userId = userStr ? JSON.parse(userStr).id : null;
 
-const addTodo = () => {
+// 수정 모드를 위한 변수들 추가
+const editingId = ref(null); // 현재 수정 중인 할 일의 ID
+const editContent = ref(""); // 수정 중인 텍스트 내용
+
+console.log("저장된 userId:", userId);
+
+const addTodo = async () => {
   if (newTodo.value.trim() === "") return;
-
-  const now = new Date();
-  const dateString = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-
-  const newItem = {
-    id: Date.now(),
-    text: newTodo.value,
-    date: dateString,
-    completed: false,
-  };
-
-  todos.value.push(newItem);
-  newTodo.value = "";
+  
+  if (!userId) {
+    alert("로그인 정보가 없습니다. 다시 로그인해 주세요.");
+    router.push("/intro");
+    return;
+  }
+  
+  const payload = { userId, content: newTodo.value };
+  
+  try {
+    await axios.post("http://localhost:3000/api/todos", payload);
+    newTodo.value = "";
+    
+    // 추가 후 목록 갱신
+    const todosRes = await axios.get(`http://localhost:3000/api/todos/${userId}`);
+    todos.value = todosRes.data;
+  } catch (error) {
+    console.error("에러:", error.response?.data || error.message);
+  }
 };
 
-const deleteTodo = (id) => {
-  todos.value = todos.value.filter((todo) => todo.id !== id);
+const deleteTodo = async (id) => {
+  try {
+    await axios.delete(`http://localhost:3000/api/todos/${id}`);
+    todos.value = todos.value.filter((todo) => todo.id !== id);
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-const editTodo = (id) => {
-  const todo = todos.value.find((t) => t.id === id);
-  const newText = prompt("할 일을 수정하세요", todo.text);
-  if (newText && newText.trim() !== "") {
-    todo.text = newText;
+// 1. 수정 버튼을 눌렀을 때 (수정 모드 시작)
+const startEdit = (todo) => {
+  editingId.value = todo.id;
+  editContent.value = todo.content;
+};
+
+// 2. 수정을 취소했을 때
+const cancelEdit = () => {
+  editingId.value = null;
+  editContent.value = "";
+};
+
+// 3. 수정 후 저장 버튼을 눌렀을 때
+const saveEdit = async (todo) => {
+  if (editContent.value.trim() === "") return;
+  
+  try {
+    await axios.put(`http://localhost:3000/api/todos/${todo.id}`, { content: editContent.value });
+    todo.content = editContent.value;
+    editingId.value = null;
+  } catch (error) {
+    console.error(error);
   }
 };
 
@@ -44,6 +81,15 @@ const handleLogout = () => {
 
 const goToProfile = () => {
   router.push("/profile");
+};
+
+// 날짜를 한국 시간에 맞게 YYYY-MM-DD 형태로 바꿔주는 함수
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 };
 </script>
 
@@ -62,15 +108,33 @@ const goToProfile = () => {
 
       <div v-for="item in todos" :key="item.id" class="todo-item">
         <div class="left">
-          <input type="checkbox" v-model="item.completed" />
-          <div>
-            <p>{{ item.text }}</p>
-            <small>{{ item.date }}</small>
+          <input type="checkbox" :checked="item.is_completed" @change="async () => { await axios.put(`http://localhost:3000/api/todos/${item.id}`, { is_completed: !item.is_completed }); item.is_completed = !item.is_completed; }" />
+          
+          <div class="content-box">
+            <div v-if="editingId === item.id">
+              <input 
+                v-model="editContent" 
+                class="inline-edit-input"
+                @keyup.enter="saveEdit(item)"
+                @keyup.esc="cancelEdit"
+              />
+            </div>
+            <div v-else>
+              <p>{{ item.content }}</p>
+            </div>
+            <small>{{ formatDate(item.created_at) }}</small>
           </div>
         </div>
+        
         <div class="actions">
-          <button @click="editTodo(item.id)">수정</button>
-          <button @click="deleteTodo(item.id)">삭제</button>
+          <template v-if="editingId === item.id">
+            <button @click="saveEdit(item)">저장</button>
+            <button @click="cancelEdit">취소</button>
+          </template>
+          <template v-else>
+            <button @click="startEdit(item)">수정</button>
+            <button @click="deleteTodo(item.id)">삭제</button>
+          </template>
         </div>
       </div>
     </div>
@@ -131,9 +195,27 @@ h1 {
   align-items: center;
 }
 
+.left {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex: 1;
+}
+
+.content-box {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
 .todo-item p {
   margin: 0;
   font-weight: bold;
+}
+
+.left input[type="checkbox"]:checked + .content-box p {
+  text-decoration: line-through;
+  color: #8b8b8b;
 }
 
 .todo-item button {
@@ -146,15 +228,18 @@ h1 {
   font-weight: bold;
 }
 
-.left {
-  display: flex;
-  gap: 10px;
-  align-items: center;
+.todo-item button:hover {
+  background: #c89b5a;
+  color: white;
 }
 
-.left input[type="checkbox"]:checked + div p {
-  text-decoration: line-through;
-  color: #8b8b8b;
+.inline-edit-input {
+  width: 90%;
+  padding: 5px;
+  border: 2px dashed #c89b5a;
+  border-radius: 5px;
+  font-size: 16px;
+  outline: none;
+  background-color: transparent;
 }
-
 </style>

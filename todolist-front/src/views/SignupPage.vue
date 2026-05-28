@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="js">
 import axios from "axios";
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";

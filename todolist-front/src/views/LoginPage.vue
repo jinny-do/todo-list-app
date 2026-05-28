@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="js">
 import axios from "axios";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
@@ -25,12 +25,19 @@ const handleLogin = async () => {
       password: pw.value,
     });
 
+    // 1. 토큰 저장 (기존 코드)
     localStorage.setItem("token", res.data.token);
+    
+    // 안되면 아래 코드 사용
+    // const userData = { id: res.data.userId };
+    const userData = res.data.user || { id: res.data.id || res.data.userId }; 
+    localStorage.setItem("user", JSON.stringify(userData));
 
-    alert(res.data.message);
+    alert(res.data.message || "로그인 성공!");
     router.push("/todo");
   } catch (err) {
-    alert(err.response?.data?.message);
+    // 에러 메시지가 없을 경우를 대비해 기본 메시지 추가
+    alert(err.response?.data?.message || "로그인 중 오류가 발생했습니다.");
   }
 };
 
