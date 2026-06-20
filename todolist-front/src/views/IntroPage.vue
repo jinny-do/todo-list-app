@@ -16,6 +16,7 @@ import LoginPage from "./LoginPage.vue";
       </div>
     </div>
 
+    
     <div class="logtin-form">
       <LoginPage />
     </div>
